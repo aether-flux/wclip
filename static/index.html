@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Clipboard Share</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 1.5rem; max-width: 600px; margin: 0 auto; }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .status { font-size: 0.85rem; padding: 0.25rem 0.75rem; border-radius: 999px; background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+    .status.connected { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+
+    .card { background: var(--card-bg); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; border: 1px solid #334155; }
+    .card h3 { font-size: 1rem; color: var(--text-muted); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .display-box { background: #0f172a; padding: 1rem; border-radius: 8px; min-height: 80px; word-break: break-word; font-family: monospace; font-size: 0.95rem; margin-bottom: 0.75rem; border: 1px solid #334155; white-space: pre-wrap; }
+    textarea { width: 100%; height: 100px; background: #0f172a; color: var(--text); border: 1px solid #334155; border-radius: 8px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; margin-bottom: 0.75rem; resize: vertical; }
+
+    button { width: 100%; padding: 0.75rem; font-weight: 600; background: var(--accent); color: #0f172a; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+    button:active { background: var(--accent-hover); }
+
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #0f172a; padding: 0.5rem 1.5rem; border-radius: 999px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2>Clipboard Share</h2>
+    <span id="status" class="status">Connecting...</span>
+  </div>
+
+  <!-- Section 1: Received from Desktop -->
+  <div class="card">
+    <h3>Latest from Desktop</h3>
+    <div id="receivedBox" class="display-box">Waiting for copy event on desktop...</div>
+    <button onclick="copyToPhone()">Copy to Phone Clipboard</button>
+  </div>
+
+  <!-- Section 2: Send to Desktop -->
+  <div class="card">
+    <h3>Send to Desktop</h3>
+    <textarea id="sendInput" placeholder="Type or paste text here to send to desktop..."></textarea>
+    <button onclick="sendToDesktop()">Send to Desktop Clipboard</button>
+  </div>
+
+  <div id="toast" class="toast">Copied!</div>
+
+  <script>
+    const statusEl = document.getElementById('status');
+    const receivedBox = document.getElementById('receivedBox');
+    const sendInput = document.getElementById('sendInput');
+    const toast = document.getElementById('toast');
+    let socket;
+
+    function connect() {
+      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      socket = new WebSocket(`${protocol}//${location.host}/ws`);
+
+      socket.onopen = () => {
+        statusEl.textContent = 'Connected';
+        statusEl.classList.add('connected');
+      };
+
+      socket.onmessage = (event) => {
+        receivedBox.textContent = event.data;
+        showToast('Received new clip!');
+      };
+
+      socket.onclose = () => {
+        statusEl.textContent = 'Disconnected';
+        statusEl.classList.remove('connected');
+        // Auto-reconnect every 2 seconds
+        setTimeout(connect, 2000);
+      };
+
+      socket.onerror = () => socket.close();
+    }
+
+    function copyToPhone() {
+      const text = receivedBox.textContent;
+      if (text && text !== 'Waiting for copy event on desktop...') {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Copied to phone!');
+        });
+      }
+    }
+
+    function sendToDesktop() {
+      const text = sendInput.value.trim();
+      if (text && socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(text);
+        showToast('Sent to Desktop!');
+        sendInput.value = ''; // Clear input field after sending
+      }
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    connect();
+  </script>
+</body>
+</html>
