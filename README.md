@@ -55,7 +55,7 @@ cargo build --release
 
 ## Usage
 
-1. Start clp on your main computer:
+1. Start wireclip on your main computer:
     ```sh
     wclip
     ```
