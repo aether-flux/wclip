@@ -1,7 +1,15 @@
 [package]
-name = "dev-chall-launch"
+name = "wclip"
 version = "0.1.0"
 edition = "2024"
+authors = ["Amartya Chowdhury"]
+description = "Zero-config, privacy-first local network clipboard synchronization daemon in Rust."
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/aether-flux/wclip"
+homepage = "https://github.com/aether-flux/wclip"
+keywords = ["clipboard", "sync", "lan", "wayland", "websockets"]
+categories = ["command-line-utilities", "asynchronous"]
 
 [dependencies]
 arboard = { version = "3.6.1", features = ["wayland-data-control"] }
@@ -12,3 +20,7 @@ rust-embed = "8.12.0"
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 tokio = { version = "1.53.1", features = ["full"] }
+
+[[bin]]
+name = "wclip"
+path = "src/main.rs"

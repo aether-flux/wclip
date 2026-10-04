@@ -328,20 +328,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dev-chall-launch"
-version = "0.1.0"
-dependencies = [
- "arboard",
- "axum",
- "local-ip-address",
- "qr2term",
- "rust-embed",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1635,6 +1621,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d8eab23fefc9e41f8e841df4a9c707e8a8c4ed26e944ef69297184de2785e3be"
 dependencies = [
  "pkg-config",
+]
+
+[[package]]
+name = "wclip"
+version = "0.1.0"
+dependencies = [
+ "arboard",
+ "axum",
+ "local-ip-address",
+ "qr2term",
+ "rust-embed",
+ "serde",
+ "serde_json",
+ "tokio",
 ]
 
 [[package]]
