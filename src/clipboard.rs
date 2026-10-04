@@ -34,7 +34,7 @@ pub fn start_clipboard_listener(tx: Arc<broadcast::Sender<String>>) {
 pub fn update_clipboard_text(text: String) {
     tokio::task::spawn_blocking(move || {
         if let Ok(mut clipboard) = Clipboard::new() {
-            if let Err(e) = clipboard.set_text(text) {
+            if let Err(_) = clipboard.set_text(text) {
                 eprintln!("[ERR] Failed to set value to clipboard");
             }
         }
