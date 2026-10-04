@@ -4,6 +4,8 @@
 
 `WireClip` is a lightweight background service that seamlessly syncs text between your desktop workstation and mobile devices over your local Wi-Fi network. Built with an earthy, warm minimalist interface, it keeps your sensitive clipboard data strictly inside your local subnet—no cloud services, no third-party accounts, and zero tracking.
 
+<video src="https://github.com/user-attachments/assets/528a53e3-92d7-448f-b49a-30bc27d5500b" controls width="100%"></video>
+
 ---
 
 ## Features
